@@ -18,5 +18,8 @@ vs2005，windows7
 如何使用：
 ======
 - Run as server： rpcdemo.exe -p port
+  - port 为server监听端口
 - Run as client： rpcdemo.exe -p port -h ip -n numRequest
-- numRequest为一个client提交的请求数量
+  - port为server监听端口
+  - ip为server ip地址
+  - numRequest为一个client提交的请求数量
