@@ -7,24 +7,24 @@
 AsynchSendResponse::AsynchSendResponse(ChannelPtr c, BufferPtr buf)
 : AsynchResult(c, buf)
 {
-    //printf("new AsynchSendResponse\n");
+    //rpcprintf("new AsynchSendResponse\n");
 }
 
 AsynchSendResponse::~AsynchSendResponse()
 {
-    //printf("~~~AsynchSendResponse\n");
+    //rpcprintf("~~~AsynchSendResponse\n");
 }
 
-void AsynchSendResponse::complete(size_t bytesTransferred,
+void AsynchSendResponse::onAsyncOperationCompleted(size_t bytesTransferred,
                         int success,
                         const void *completionKey,
                         u_long error)
 {
     // Copy the data which was returned by <GetQueuedCompletionStatus>.
     this->bytesTransferred = bytesTransferred;
-    this->success_ = success;
+    this->success = success;
     this->completionKey = completionKey;
-    this->error_ = error;
+    this->operationError = error;
 
     if (handler != 0)
     {

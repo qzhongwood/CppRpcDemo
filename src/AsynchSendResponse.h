@@ -7,6 +7,6 @@ public:
     AsynchSendResponse(ChannelPtr c, BufferPtr buf);
     ~AsynchSendResponse();
 
-    virtual void complete(size_t bytesTransferred,
+    virtual void onAsyncOperationCompleted(size_t bytesTransferred,
         int success, const void *completionKey, u_long error);
 };

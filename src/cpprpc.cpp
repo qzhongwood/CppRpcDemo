@@ -31,12 +31,29 @@ using namespace std;
 
 void runAsServer(int port);
 void runAsClient(const string& host, int port, int numTask);
+void runAsAsyncClient(const string& host, int port, int numTask);
+void dumpResponse(RemotingCommandPtr response, const string& opcode);
+
+void displayUsageAndExit()
+{
+    info_printf("Usage:\n");
+    info_printf("    Run as server: rpcdemo.exe -p port\n");
+    info_printf("    Run as sync client: rpcdemo.exe -p port -h ip -n numRequest\n");
+    info_printf("    Run as async client: rpcdemo.exe -p port -h ip -n numRequest -a\n");
+    exit(-1);
+}
 
 int main(int argc, char* argv[])
 {
     string host;
-    int port    = 16666;
-    int numTask = 1000;
+    int port    = -1;
+    int numTask = -1;
+    bool asyncMode = false;
+
+    if (argc != 3 && argc != 7 && argc != 8)
+    {
+        displayUsageAndExit();
+    }
 
     int i = 1;
     while (i < argc)
@@ -46,6 +63,12 @@ int main(int argc, char* argv[])
         {
             host = argv[++i];
         }
+
+        if (opt.compare("-a") == 0)
+        {
+            asyncMode = true;
+        }
+
         if (opt.compare("-p") == 0)
         {
             port = atoi(argv[++i]);
@@ -58,11 +81,27 @@ int main(int argc, char* argv[])
         ++i;
     }
 
+    if (port < 0)
+    {
+        displayUsageAndExit();
+    }
+
     try
     {
         if (host.length() > 0)
         {
-            runAsClient(host, port, numTask);
+            if (numTask < 0)
+            {
+                displayUsageAndExit();
+            }
+            if (asyncMode)
+            {
+                runAsAsyncClient(host, port, numTask);
+            }
+            else
+            {
+                runAsClient(host, port, numTask);
+            }
         }
         else
         {
@@ -71,12 +110,12 @@ int main(int argc, char* argv[])
     }
     catch (Exception* e)
     {
-        printf("Exception: %s\n", e->getMessage().c_str());
+        info_printf("Exception: %s\n", e->getMessage().c_str());
         delete e;
     }    
     catch (...)
     {
-        printf("Exception happened!\n");
+        info_printf("Exception happened!\n");
     }
   
     return 0;
@@ -105,16 +144,12 @@ RemotingCommandPtr produceRequest()
     return cmd;
 }
 
-void runAsClient(const string& host, int port, int numTask) 
+void runAsAsyncClient(const string& host, int port, int numTask) 
 {
     networkInit();
 
     RemotingClientPtr client = new RemotingClientImpl();
-#if 1
-    client->start();
-#else
     client->start(host, port);
-#endif
 
     for (int i = 0; i < numTask; ++i)
     {
@@ -122,30 +157,28 @@ void runAsClient(const string& host, int port, int numTask)
         char tmp[2];
         sprintf(tmp, "%d", (i % 3) + 1);
         cmd->setOpCode(tmp);
-        cmd->setOpCode("2");
         cmd->setIndex(i + 1);
-#if 1
-        //RemotingCommandPtr response = client->asyncInvoke(host.c_str(), port, cmd);
-        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 50000);
-        if (response != NULL)
-        {
-            printf("Response: <%s>\n", response->toString().c_str());
-        }
-        else
-        {
-            //printf("Response: Failed!!!\n");
-        }
-#else
+
+        info_printf("Submit request: opcode<%s>, index<%d>\n", 
+            tmp, i + 1);
+
         client->asyncInvoke(cmd);
-#endif
     }
 
-    list<RemotingCommandPtr> cmdList;
-
+    size_t size = 0;
     while (true)
     {
+        list<RemotingCommandPtr> cmdList;
         client->fetchResponse(cmdList);
-        if (cmdList.size() == numTask)
+        size += cmdList.size();
+        while (cmdList.size() > 0)
+        {
+            RemotingCommandPtr resp = *(cmdList.begin());
+            cmdList.pop_front();
+            dumpResponse(resp, "");
+        }
+
+        if (size == numTask)
         {
             break;
         }
@@ -155,86 +188,47 @@ void runAsClient(const string& host, int port, int numTask)
     client->stop();
 }
 
+
+void runAsClient(const string& host, int port, int numTask) 
+{
+    networkInit();
+
+    RemotingClientPtr client = new RemotingClientImpl();
+    client->start();
+
+    for (int i = 0; i < numTask; ++i)
+    {
+        RemotingCommandPtr cmd = produceRequest();
+        char tmp[2];
+        sprintf(tmp, "%d", (i % 3) + 1);
+        cmd->setOpCode(tmp);
+        cmd->setIndex(i + 1);
+
+        info_printf("Submit request: index<%d>, opcode<%s>\n", 
+            i + 1, tmp);
+
+        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 60);
+        dumpResponse(response, tmp);
+    }
+
+    client->stop();
+}
+
+void dumpResponse(RemotingCommandPtr response, const string& opcode)
+{
+    if (response != NULL)
+    {
+        info_printf("Response: <%s>\n", response->toString().c_str());
+    }
+    else
+    {
+        info_printf("Response: Failed!!! opcode<%s>\n", opcode.c_str());
+    }
+}
+
 void runAsServer(int port) 
 {
     networkInit();
     RemotingServerPtr server = new RemotingServerImpl();
     server->start(port);
 }
-
-/*
-HANDLE gDoneEvent;
-
-VOID CALLBACK TimerRoutine(PVOID lpParam, BOOLEAN TimerOrWaitFired)
-{
-    if (lpParam == NULL)
-    {
-        printf("TimerRoutine lpParam is NULL\n");
-    }
-    else
-    {
-        // lpParam points to the argument; in this case it is an int
-
-        printf("Timer routine called. Parameter is %d.\n", 
-            *(int*)lpParam);
-        if(TimerOrWaitFired)
-        {
-            printf("The wait timed out.\n");
-        }
-        else
-        {
-            printf("The wait event was signaled.\n");
-        }
-    }
-
-    SetEvent(gDoneEvent);
-}
-
-int test()
-{
-    HANDLE hTimer = NULL;
-    HANDLE hTimerQueue = NULL;
-    int arg = 123;
-
-    // Use an event object to track the TimerRoutine execution
-    gDoneEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-    if (NULL == gDoneEvent)
-    {
-        printf("CreateEvent failed (%d)\n", GetLastError());
-        return 1;
-    }
-
-    // Create the timer queue.
-    hTimerQueue = CreateTimerQueue();
-    if (NULL == hTimerQueue)
-    {
-        printf("CreateTimerQueue failed (%d)\n", GetLastError());
-        return 2;
-    }
-
-    // Set a timer to call the timer routine in 10 seconds.
-    if (!CreateTimerQueueTimer( &hTimer, hTimerQueue, 
-        (WAITORTIMERCALLBACK)TimerRoutine, &arg , 10000, 0, 0))
-    {
-        printf("CreateTimerQueueTimer failed (%d)\n", GetLastError());
-        return 3;
-    }
-
-    // TODO: Do other useful work here 
-
-    printf("Call timer routine in 10 seconds...\n");
-
-    // Wait for the timer-queue thread to complete using an event 
-    // object. The thread will signal the event at that time.
-
-    if (WaitForSingleObject(gDoneEvent, INFINITE) != WAIT_OBJECT_0)
-        printf("WaitForSingleObject failed (%d)\n", GetLastError());
-
-    CloseHandle(gDoneEvent);
-
-    // Delete all timers in the timer queue.
-    if (!DeleteTimerQueue(hTimerQueue))
-        printf("DeleteTimerQueue failed (%d)\n", GetLastError());
-
-    return 0;
-}*/

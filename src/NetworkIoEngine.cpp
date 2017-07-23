@@ -25,11 +25,11 @@ Mutex NetworkIoEngine::mutex;
 
 DWORD WINAPI WorkingThread(LPVOID IpParam)
 {
-    printf("Network I/O working thread started. Thread id <%d>\n", GetCurrentThreadId());
+    rpcprintf("Network I/O working thread started. Thread id <%d>\n", GetCurrentThreadId());
 
     while (true)
     {
-        NetworkIoEngine::instance()->handleEvents(6000);
+        NetworkIoEngine::instance()->handleEvents(INFINITE);
     }
     return 0;
 }
@@ -52,14 +52,14 @@ int NetworkIoEngine::init()
 
     if (0 != err)
     { 
-        printf("Request Windows Socket Library Error!\n");
+        rpcprintf("Request Windows Socket Library Error!\n");
         return -1;
     }
 
     if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2) 
     {
         WSACleanup();
-        printf("Request Windows Socket Version 2.2 Error!\n");
+        rpcprintf("Request Windows Socket Version 2.2 Error!\n");
         return -1;
     }
 
@@ -71,7 +71,7 @@ int NetworkIoEngine::createIocp()
     completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
     if (NULL == completionPort) 
     {   
-        printf("CreateIoCompletionPort failed. Error: %d\n", GetLastError());
+        rpcprintf("CreateIoCompletionPort failed. Error: %d\n", GetLastError());
         return -1;
     }
 
@@ -84,7 +84,7 @@ int NetworkIoEngine::createIocp()
         HANDLE ThreadHandle = CreateThread(NULL, 0, WorkingThread, completionPort, 0, NULL);
         if (NULL == ThreadHandle)
         {
-            printf("Create Thread Handle failed. Error: %d\n", GetLastError());
+            rpcprintf("Create Thread Handle failed. Error: %d\n", GetLastError());
             break;
         }
         CloseHandle(ThreadHandle);
@@ -137,71 +137,14 @@ void NetworkIoEngine::handleEvents(unsigned long milliSeconds)
     if (result == TRUE && overlapped != 0)
     {
         AsynchResultPtr response = (AsynchResult*)overlapped;
-        u_long result_err = response->error();
-        if (result_err == 0)
+        u_long resultErr = response->error();
+        if (resultErr == 0)
         {   
-            result_err = errno;
+            resultErr = errno;
         }
 
-        response->complete(bytesTransferred, result_err ? 0 : 1,  (void *)completionKey, result_err);
+        response->onAsyncOperationCompleted(bytesTransferred, resultErr ? 0 : 1, 
+            (void*)completionKey, resultErr);
         response->decreaseReferenceCount();
     }
 }
-
-
-/*
-void NetworkIoEngine::handleEvents(unsigned long milliSeconds)
-{
-    OVERLAPPED *overlapped  = 0;
-    u_long bytesTransferred = 0;
-    ULONG_PTR completionKey = 0;
-
-    // get the next asynchronous operation that completes
-    BOOL result = ::GetQueuedCompletionStatus(
-        completionPort,
-        &bytesTransferred,
-        &completionKey,
-        &overlapped,
-        milliSeconds);
-
-    if (result == FALSE && overlapped == 0)
-    {
-        switch (errno)
-        {
-        case WAIT_TIMEOUT:
-            return 0;
-
-        case ERROR_SUCCESS:
-            return 0;
-
-        default:
-            return -1;
-        }
-    }
-    else if (overlapped != 0)
-    {
-        // Narrow the result.
-        AsynchResultPtr response = (AsynchResult*)overlapped;
-
-        // If errors happen, grab the error.
-        if (result == FALSE)
-        {
-            errno = ::GetLastError();
-        }
-        else
-        {
-            errno = 0;
-        }
-
-        u_long result_err = response->error ();
-        if (result_err == 0)
-        {   
-            result_err = errno;
-        }
-
-        response->complete(bytesTransferred, result_err ? 0 : 1,  (void *)completionKey, result_err);
-        response->decreaseReferenceCount();
-    }
-    return 1;
-}
-*/

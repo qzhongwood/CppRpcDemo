@@ -7,7 +7,7 @@ public:
     AsynchRecvResponse(ChannelPtr c, BufferPtr buf);
     ~AsynchRecvResponse();
 
-    virtual void complete(size_t bytesTransferred,
+    virtual void onAsyncOperationCompleted(size_t bytesTransferred,
         int success, const void *completionKey, u_long error);
 
 };

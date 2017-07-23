@@ -21,7 +21,7 @@ RemotingCommand::RemotingCommand(BufferPtr buffer)
 RemotingCommand::~RemotingCommand(void)
 {
     int n = --counter;
-    printf("~RemotingCommand: <%x>, counter <%d>\n", this, n);
+    rpcprintf("~RemotingCommand: <%x>, counter <%d>\n", this, n);
     if (releasePayload)
     {
         delete [] payload;
@@ -165,15 +165,14 @@ string RemotingCommand::toString()
         {
             headerString += ",";
         }
-
         sprintf(tmp, "<%s>=<%s>", it->first.c_str(), it->second.c_str());
         headerString += tmp;
     }
 
-    sprintf(buf, "op<%s>, resultCode<%d>, index<%d>, header<%s>, payload_length<%d>, payload<%s>\n",
+    sprintf(buf, "index<%d>, opcode<%s>, resultCode<%d>, header<%s>, payload_length<%d>, payload<%s>",
+        index,
         opCodeString.c_str(),
         resultCode,
-        index,
         headerString.c_str(),
         payloadLength,
         payload);

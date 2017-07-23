@@ -1,5 +1,5 @@
 #pragma once
-
+#include "stdafx.h"
 #include "Buffer.h"
 
 AtomicCounter Buffer::counter;
@@ -9,7 +9,7 @@ Buffer::Buffer(size_t len)
 , offset(0)
 {
     ++counter;
-    //printf("new Buffer from remote\n");
+    //rpcprintf("new Buffer from remote\n");
     data = new char[length + 1];
     memset(data, 0, length + 1);
 }
@@ -21,13 +21,13 @@ Buffer::Buffer(char* b, size_t len)
 , offset(len)
 {
     ++counter;
-    //printf("new Buffer local\n");
+    //rpcprintf("new Buffer local\n");
 }
 
 Buffer::~Buffer(void)
 {
     int n = --counter;
-    printf("~Buffer: <%x>, counter <%d>\n", this, n);
+    rpcprintf("~Buffer: <%x>, counter <%d>\n", this, n);
   
     if (releaseBuf)
     {

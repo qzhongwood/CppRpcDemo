@@ -14,13 +14,13 @@ Channel::Channel(string address, int port, SOCKET sock)
 , closed(false)
 {
     long n = ++counter;
-    printf("new Channel: <%x>, counter <%d>\n", this, n);
+    rpcprintf("new Channel: <%x>, counter <%d>\n", this, n);
 }
 
 Channel::~Channel(void)
 {
     int n = --counter;
-    printf("~Channel: <%x>, counter <%d>\n", this, n);
+    rpcprintf("~Channel: <%x>, counter <%d>\n", this, n);
     shutdown();
 }
 
@@ -48,7 +48,7 @@ void Channel::handleRecvResponse(AsynchResultPtr res)
 
     if (res->getBytesTransferred() == 0)
     {
-        printf("Oops!!!! bytesTransferred <%d> <%x>\n", 
+        rpcprintf("Oops!!!! bytesTransferred <%d> <%x>\n", 
             res->getBytesTransferred(), this);
         return;
     }
@@ -99,13 +99,13 @@ int Channel::asyncRecv(BufferPtr buf)
 
     if (res != 0 && WSA_IO_PENDING != WSAGetLastError())
     {
-        printf("WSARecv :%d, err: %d, refCounter: <%d>, this <%p>, this <%x>\n", 
+        rpcprintf("WSARecv :%d, err: %d, refCounter: <%d>, this <%p>, this <%x>\n", 
             res, WSAGetLastError(), getReferenceCount(), this, this);
         shutdown();
     } 
     else
     {
-        //printf("succeed WSARecv: %d\n", RecvBytes);
+        //rpcprintf("succeed WSARecv: %d\n", RecvBytes);
         res = 0;
     }
 
@@ -115,7 +115,7 @@ int Channel::asyncRecv(BufferPtr buf)
 void Channel::handleSendResponse(AsynchResultPtr res)
 {
     /*
-    printf("handleSendResponse: bytesTransferred<%d>, success<%d>, event<%x>\n", 
+    rpcprintf("handleSendResponse: bytesTransferred<%d>, success<%d>, event<%x>\n", 
             res->getBytesTransferred(),
             res->success(), res->event()
             );*/
@@ -142,13 +142,13 @@ int Channel::asyncSend(BufferPtr sendbuf)
 
     if (res != 0 && WSA_IO_PENDING != WSAGetLastError())
     {
-        printf("WSASend :%d, err: %d, refCounter: <%d>, this<%p>\n", 
+        rpcprintf("WSASend :%d, err: %d, refCounter: <%d>, this<%p>\n", 
             res, WSAGetLastError(), getReferenceCount(), this);
         shutdown();
     }
     else
     {
-        //printf("succeed WSASend: %d\n");
+        //rpcprintf("succeed WSASend: %d\n");
         res = 0;
     }
     return res;

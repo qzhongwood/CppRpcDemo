@@ -55,14 +55,14 @@ void RemotingServerImpl::onRemotingCommand(ChannelPtr channel, RemotingCommandPt
     }
     else
     {
-        printf("Unregistered processor: command opcode<%s>", cmd->getOpCode().c_str());
+        rpcprintf("Unregistered processor: command opcode<%s>", cmd->getOpCode().c_str());
     }
 }
 
 void RemotingServerImpl::onRemotingCommand(ChannelPtr channel, BufferPtr buffer)
 {
     RemotingCommandPtr cmd = new RemotingCommand(buffer);
-    //printf("Server: command<%s>", cmd->toString().c_str());
+    //rpcprintf("Server: command<%s>", cmd->toString().c_str());
     onRemotingCommand(channel, cmd);
 }
 

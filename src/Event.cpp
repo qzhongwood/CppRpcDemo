@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Event.h"
 #include <iostream>
 
@@ -22,15 +23,15 @@ void Event::await(int milliseconds) const
     switch (res) 
     {
     case WAIT_TIMEOUT: 
-        printf("Event: Thread %d WAIT_TIMEOUT\n", GetCurrentThreadId());
+        rpcprintf("Event: Thread %d WAIT_TIMEOUT\n", GetCurrentThreadId());
         break;         
     case WAIT_OBJECT_0: 
         // Event object was signaled
-        printf("Event: Thread %d signaled\n", GetCurrentThreadId());
+        rpcprintf("Event: Thread %d signaled\n", GetCurrentThreadId());
         break; 
         // An error occurred
     default: 
-        printf("Wait error (%d)\n", GetLastError()); 
+        rpcprintf("Wait error (%d)\n", GetLastError()); 
     }
 }
 

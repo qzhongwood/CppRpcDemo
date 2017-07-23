@@ -46,18 +46,18 @@ int Acceptor::start(int port)
     int bindResult = bind(srvSocket, (SOCKADDR*)&srvAddr, sizeof(SOCKADDR));
     if (SOCKET_ERROR == bindResult) 
     {
-        printf("Bind failed. Error: %d\n", GetLastError());
+        info_printf("Bind failed. Error: %d\n", GetLastError());
         throw new Exception("Bind failed.");
     }
 
     int listenResult = listen(srvSocket, 10);
     if (SOCKET_ERROR == listenResult)
     {
-        printf("Listen failed. Error: %d\n", GetLastError());
+        info_printf("Listen failed. Error: %d\n", GetLastError());
         throw new Exception("Listen failed.");
     }
 
-    printf("Listening on port %d ...\n", port);
+    info_printf("Listening on port %d ...\n", port);
 
     while (!stopped) 
     {
@@ -65,10 +65,10 @@ int Acceptor::start(int port)
 
         int RemoteLen = sizeof(saRemote);
         SOCKET acceptSocket = accept(srvSocket, (SOCKADDR*)&saRemote, &RemoteLen);
-        printf("Here comes socket: %d\n", acceptSocket);
+        info_printf("Here comes socket: %d\n", acceptSocket);
         if (SOCKET_ERROR == acceptSocket) 
         { 
-            printf("Accept Error: %d \n", GetLastError());
+            info_printf("Accept Error: %d \n", GetLastError());
             throw new Exception("Accept failed.");
         }
 

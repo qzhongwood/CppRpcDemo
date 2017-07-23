@@ -21,28 +21,26 @@ public:
 
     virtual void start();
     virtual RemotingCommandPtr invoke(string address, int port, RemotingCommandPtr command, long timeOut);
-    virtual RemotingCommandPtr asyncInvoke(string address, int port, RemotingCommandPtr command);
 
     // better performance interface
     virtual void start(string address, int port);
-    virtual RemotingCommandPtr invoke(RemotingCommandPtr command, long timeOut);
     virtual RemotingCommandPtr asyncInvoke(RemotingCommandPtr command);
 
     virtual void stop();
 
     virtual void onRemotingCommand(ChannelPtr channel, BufferPtr buffer);
-    void fetchResponse(list<RemotingCommandPtr>& cmdList);
+    virtual void fetchResponse(list<RemotingCommandPtr>& cmdList);
 
 protected:
-    void execute(string address, int port, RemotingCommandPtr command);
+    void submit(string address, int port, RemotingCommandPtr command);
     ChannelPtr getChannel(string address, int port);
-    map<string, ChannelPtr> channelMap;
+
     Mutex channelMapMutex;
+    map<string, ChannelPtr> channelMap;
 
     Mutex eventMapMutex;
     map<int, EventPtr> eventMap;
     map<int, RemotingCommandPtr> responseMap;
 
-    //ExecutorServicePtr pool;
     ChannelPtr currentChannel;
 };

@@ -79,23 +79,10 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
         eventMap[index] = event;
     }
 
-    execute(address, port, command);
-
-    printf("event->await(timeOut)\n");
-
-    /*
-    while (timeOut > 0)
-    {
-        timeOut--;
-        Sleep(1);
-    }*/
-
+    submit(address, port, command);
+    Sleep(1);
 
     event->await(timeOut);
-
-
-    printf("event->await(timeOut) done!!!!!!!!!!!!!!!!!!\n");
-
     {
         Lock lock(eventMapMutex);
         map<int, EventPtr>::iterator it = eventMap.find(index);
@@ -116,7 +103,7 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
 }
 
 
-void RemotingClientImpl::execute(string address, int port, RemotingCommandPtr command)
+void RemotingClientImpl::submit(string address, int port, RemotingCommandPtr command)
 {
     ChannelPtr channel = getChannel(address, port);
     if (channel != NULL)
@@ -130,23 +117,10 @@ void RemotingClientImpl::execute(string address, int port, RemotingCommandPtr co
     }
 }
 
-RemotingCommandPtr RemotingClientImpl::asyncInvoke(string address, int port, RemotingCommandPtr command)
-{
-    //AsyncTaskPtr task = ThreadStartInfo(this, &RemotingClientImpl::execute, address, port, command);
-    //pool->submitTask(task);
-    execute(address, port, command);    
-    return NULL;
-}
 
 void RemotingClientImpl::start(string address, int port)
 {
     currentChannel = getChannel(address, port);
-}
-
-RemotingCommandPtr RemotingClientImpl::invoke(RemotingCommandPtr command, long timeOut)
-{
-    asyncInvoke(command);
-    return NULL;
 }
 
 RemotingCommandPtr RemotingClientImpl::asyncInvoke(RemotingCommandPtr command)
@@ -159,7 +133,6 @@ RemotingCommandPtr RemotingClientImpl::asyncInvoke(RemotingCommandPtr command)
     return NULL;
 }
 
-
 void RemotingClientImpl::onRemotingCommand(ChannelPtr channel, BufferPtr responseBuffer)
 {
     RemotingCommandPtr response = new RemotingCommand(responseBuffer);
@@ -171,10 +144,8 @@ void RemotingClientImpl::onRemotingCommand(ChannelPtr channel, BufferPtr respons
             (it->second)->signal();
             eventMap.erase(it);
         }
-
         responseMap[response->getIndex()] = response;
     }
-    printf("Receive response: <%s>\n", response->toString().c_str());
 }
 
 void RemotingClientImpl::fetchResponse(list<RemotingCommandPtr>& cmdList)

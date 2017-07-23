@@ -29,7 +29,7 @@ RemotingCommandPtr AntRequestProcessor::process(ChannelPtr channel, RemotingComm
 
     response->setIndex(request->getIndex());
 
-    printf("Ant processor working. Thread Id <%d>\n", GetCurrentThreadId());
+    rpcprintf("Ant processor working. Thread Id <%d>\n", GetCurrentThreadId());
 
     char body[] = "This is from AntRequestProcessor";
     response->setPayload(body, sizeof(body));

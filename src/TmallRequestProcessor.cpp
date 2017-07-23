@@ -29,10 +29,10 @@ RemotingCommandPtr TmallRequestProcessor::process(ChannelPtr channel, RemotingCo
     response->setResultCode(0);
     response->setIndex(request->getIndex());
 
-    printf("Tmall processor working. request id<%d>, Thread Id %d\n",
+    rpcprintf("Tmall processor working. request id<%d>, Thread Id %d\n",
         request->getIndex(),
         GetCurrentThreadId());
-    Sleep(10000);
+    //Sleep(10000);
 
     char body[] = "This is from TmallRequestProcessor";
     response->setPayload(body, sizeof(body));

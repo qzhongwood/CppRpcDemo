@@ -10,7 +10,7 @@ AsynchResult::AsynchResult(ChannelPtr c, BufferPtr b)
 , buffer(b)
 {
     ++counter;
-    printf("new AsynchResult\n");
+    rpcprintf("new AsynchResult\n");
 
     this->Internal = 0;
     this->InternalHigh = 0;
@@ -22,7 +22,7 @@ AsynchResult::AsynchResult(ChannelPtr c, BufferPtr b)
 AsynchResult::~AsynchResult(void)
 {
     int n = --counter;
-    printf("~AsynchResult: <%x>, counter <%d>\n", this, n);
+    rpcprintf("~AsynchResult: <%x>, counter <%d>\n", this, n);
     if (buffer != NULL)
     {
         buffer->clear();
@@ -39,32 +39,17 @@ void AsynchResult::setBuffer(BufferPtr buf)
     this->buffer = buf;
 }
 
-size_t AsynchResult::getBytesTransferred (void) const
+size_t AsynchResult::getBytesTransferred(void) const
 {
     return this->bytesTransferred;
 }
 
-int AsynchResult::success (void) const
+int AsynchResult::isSuccess(void) const
 {
-    return this->success_;
+    return this->success;
 }
 
-u_long AsynchResult::error (void) const
+u_long AsynchResult::error(void) const
 {
-    return this->error_;
-}
-
-HANDLE AsynchResult::event (void) const
-{
-    return this->hEvent;
-}
-
-u_long AsynchResult::offset (void) const
-{
-    return this->Offset;
-}
-
-u_long AsynchResult::offset_high (void) const
-{
-    return this->OffsetHigh;
+    return this->operationError;
 }

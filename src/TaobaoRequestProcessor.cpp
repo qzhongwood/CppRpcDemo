@@ -39,7 +39,7 @@ RemotingCommandPtr TaobaoRequestProcessor::process(ChannelPtr channel, RemotingC
         sprintf(buf, "%s is in %s.", request->getPayload(), it->second.c_str());
     }
 
-    printf("Taobao processor working. Thread Id <%d>. Result <%s>\n", GetCurrentThreadId(), buf);
+    rpcprintf("Taobao processor working. Thread Id <%d>. Result <%s>\n", GetCurrentThreadId(), buf);
     response->setPayload(buf, sizeof(buf));
     channel->asyncSend(response->command2Buffer());
     return response;

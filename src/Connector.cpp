@@ -39,7 +39,7 @@ ChannelPtr Connector::establishChannel(string address, int port)
     SOCKET scok = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
     if (scok == INVALID_SOCKET)
     {
-        printf("invalid socket !");
+        info_printf("invalid socket !");
         return 0;
     }
 
@@ -49,13 +49,12 @@ ChannelPtr Connector::establishChannel(string address, int port)
     serAddr.sin_addr.S_un.S_addr = inet_addr(address.c_str()); 
     if (::connect(scok, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
     {
-        //printf("failed tconnect error!\n");
         closesocket(scok);
         throw new Exception("Failed to establish connection!");
     }
     else
     {
-        printf("Connection to %s:%d establisted!\n", address.c_str(), port);
+        info_printf("Connection to %s:%d establisted!\n", address.c_str(), port);
         channel = new Channel(address, port, scok);
     }
 

@@ -14,37 +14,19 @@ public:
     AsynchResult(ChannelPtr channel, BufferPtr buf);
     ~AsynchResult(void);
 
-    virtual void complete(size_t bytesTransferred,
+    virtual void onAsyncOperationCompleted(size_t bytesTransferred,
         int success,
         const void *completionKey,
         u_long error) = 0;
 
-    /// Number of bytes transferred by the operation.
+    // Number of bytes transferred by the operation.
     size_t getBytesTransferred(void) const;
 
-    /// Did the operation succeed?
-    int success (void) const;
+    // Did the operation succeed?
+    int isSuccess (void) const;
 
-    /// Error value if the operation fail.
+    // Error value if the operation fail.
     u_long error (void) const;
-
-    /// Event associated with the OVERLAPPED structure.
-    HANDLE event (void) const;
-
-    /// This really make sense only when doing file I/O.
-    u_long offset (void) const;
-
-    /// Offset_high associated with the OVERLAPPED structure.
-    u_long offset_high (void) const;
-
-    /// Returns 0.
-    int signal_number (void) const;
-
-    /// Simulate error value to use in the post_completion ()
-    void set_error (u_long errcode);
-
-    /// Simulate value to use in the post_completion ()
-    void setBytesTransferred (size_t nbytes);
 
     BufferPtr getBuffer();
     void setBuffer(BufferPtr buf);
@@ -55,13 +37,13 @@ protected:
     size_t bytesTransferred;
 
     /// Success indicator.
-    int success_;
+    int success;
 
     /// ACT associated with handle.
     const void *completionKey;
 
     /// Error if operation failed.
-    u_long error_;
+    u_long operationError;
 
     ChannelPtr handler;
     BufferPtr  buffer;

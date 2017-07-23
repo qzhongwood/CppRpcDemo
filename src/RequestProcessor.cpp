@@ -15,8 +15,11 @@ RequestProcessor::~RequestProcessor()
 
 void RequestProcessor::setThreadPool(ExecutorServicePtr threadPool)
 {
-    pool = threadPool;
-    pool->spawn();
+    if (threadPool != NULL)
+    {
+        pool = threadPool;
+        pool->spawn();
+    }
 }
 
 RemotingCommandPtr RequestProcessor::processRequest(ChannelPtr channel, RemotingCommandPtr request)
