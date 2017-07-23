@@ -24,4 +24,4 @@ vs2005，windows7
   - port为server监听端口
   - ip为server ip地址
   - numRequest为一个client提交的请求数量
-  - "-a"该option为异步发送请求， 无该option则为同步发送
+  - "-a" option为异步发送请求， 无则为同步发送
