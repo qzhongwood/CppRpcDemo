@@ -6,87 +6,70 @@ class Referable
 public:
     Referable();
 
-    /**
-    * Increase smart reference count.
-    * Should be only called by the <CODE>Ref</CODE> objects.
-    *
-    * @return Smart reference count after increasing.
-    */
-    inline long increaseReferenceCount () { return ++_referenceCount; }
+    inline long increaseReferenceCount () 
+    { 
+        return ++referenceCount; 
+    }
 
-    /**
-    * Decrease smart reference count.
-    * If reference count is zero this object should be deleted.
-    * Should be only called by the <CODE>Ref</CODE> objects.
-    *
-    * @return Smart reference count after decreasing.
-    */
-    inline long decreaseReferenceCount () { return --_referenceCount; }
+    inline long decreaseReferenceCount () 
+    { 
+        return --referenceCount;
+    }
 
-    /**
-    * Returns current smart reference count.
-    * <CODE>Ref</CODE> class does not need this method.
-    * Normally this method is not needed.
-    */
-    inline long getReferenceCount () const { return _referenceCount; }
+    inline long getReferenceCount () const 
+    { 
+        return referenceCount; 
+    }
 
-    /**
-    * Sets the current smart reference count.
-    * <CODE>Ref</CODE> class does not need this method.
-    * Normally this method is not needed.
-    */
-    inline void setReferenceCount (long value) { _referenceCount = value; }
+    inline void setReferenceCount (long value) 
+    { 
+        referenceCount = value; 
+    }
 
     virtual ~Referable();
 private:
-    AtomicCounter _referenceCount;
+    AtomicCounter referenceCount;
 };
 
 
 template <class T> class Ref
 {
 public:
-    /**
-    * Default constructor.
-    */
-    Ref() : object(NULL) {}
+    Ref() : object(NULL) 
+    {}
 
-    /**
-    * Copy constrcutor.
-    */
-    Ref(const Ref<T>& other) : object(NULL) { set(other.object); }
+    Ref(const Ref<T>& other) : object(NULL) 
+    { 
+        set(other.object);
+    }
 
-    /**
-    * Value constructor.
-    */
-    Ref(T* obj) : object(obj) { if(obj) obj->increaseReferenceCount(); }
+    Ref(T* obj) : object(obj) 
+    { 
+        if(obj) obj->increaseReferenceCount();
+    }
 
-    /**
-    * Virtual destructor which releases the object reference.
-    */
-    virtual ~Ref() { set(NULL); }
+    virtual ~Ref() 
+    { 
+        set(NULL);
+    }
 
-    /**
-    * Allows other classes to point directly the
-    * reference class' method. Because of templates, no
-    * casting is needed.
-    */
-    inline T* operator->() const { return object; }
+    inline T* operator->() const
+    { 
+        return object;
+    }
 
-    /**
-    * Sets the reference of this object to the
-    * reference of the other object.
-    */
-    inline Ref<T>& operator=(Ref<T> const& other) { set(other.object); return *this; }
+    inline Ref<T>& operator = (Ref<T> const& other) 
+    { 
+        set(other.object); 
+        return *this; 
+    }
 
-    /**
-    * Sets a new object for this reference.
-    */
-    inline Ref<T>& operator=(T* obj) { set(obj); return *this; }
+    inline Ref<T>& operator = (T* obj) 
+    { 
+        set(obj); 
+        return *this; 
+    }
 
-    /**
-    * Sets a new object for this reference.
-    */
     inline void set (T* newobj)
     {
         // If equal do nothing
@@ -101,7 +84,7 @@ public:
             newobj->increaseReferenceCount();
         }
 
-        T*      tmp = object;
+        T* tmp = object;
         object = newobj;
 
         // Decrease the reference count of the old referable
@@ -114,17 +97,9 @@ public:
         }
     }
 
-    /**
-    * Return object pointer. This method should be used with
-    * care because it breaks the encapsulation.
-    * Typically this method is needed for the method calls
-    * which require literal object pointer.
-    *
-    * <P>It may not be bad idea to pass the <CODE>Ref</CODE>
-    * objects as method arguments.</P>
-    *
-    * @return Object pointer or <CODE>NULL</CODE>.
-    */
+    
+    // Return object pointer. This method should be used with
+    // care because it breaks the encapsulation.
     inline T* get() const
     {
         return object;

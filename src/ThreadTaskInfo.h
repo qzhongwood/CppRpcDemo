@@ -22,7 +22,7 @@ public:
     }
 
 protected:
-    virtual void Execute()=0;
+    virtual void Execute() = 0;
 };
 
 typedef Ref<AsyncTask> AsyncTaskPtr;

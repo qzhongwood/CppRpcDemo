@@ -10,7 +10,6 @@ AsynchResult::AsynchResult(ChannelPtr c, BufferPtr b)
 , buffer(b)
 {
     ++counter;
-    rpcprintf("new AsynchResult\n");
 
     this->Internal = 0;
     this->InternalHigh = 0;
@@ -22,7 +21,7 @@ AsynchResult::AsynchResult(ChannelPtr c, BufferPtr b)
 AsynchResult::~AsynchResult(void)
 {
     int n = --counter;
-    rpcprintf("~AsynchResult: <%x>, counter <%d>\n", this, n);
+    rpcprintf("AsynchResult destruction: <%x>, counter <%d>\n", this, n);
     if (buffer != NULL)
     {
         buffer->clear();

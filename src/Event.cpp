@@ -5,8 +5,7 @@
 Event::Event(bool manualRet)
 {
     handle = CreateEventA(NULL,               // default security attributes
-        manualRet ? TRUE : FALSE,
-        //FALSE,               // manual-reset event
+        manualRet ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
         ("RPC_EVENT")   // object name
         ); 
@@ -31,17 +30,17 @@ void Event::await(int milliseconds) const
         break; 
         // An error occurred
     default: 
-        rpcprintf("Wait error (%d)\n", GetLastError()); 
+        rpcprintf("Wait error: %d\n", GetLastError()); 
     }
 }
 
 
 void Event::signal() const
 {
-    SetEvent(handle);
+    ::SetEvent(handle);
 }
 
 void Event::reset() const
 {
-    ResetEvent(handle);
+    ::ResetEvent(handle);
 }

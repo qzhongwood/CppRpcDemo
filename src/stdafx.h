@@ -10,15 +10,6 @@
 #include <stdio.h>
 #include <tchar.h>
 
-//#define rpcprintf    printf
 #define rpcprintf
-
-
 #define info_printf  printf
-
-/*
-#define info_printf(a)  rpcprintf(a)
-#define debug_printf(a) rpcprintf(a)
-#define rpcprintf(a) 
-*/
-// TODO: reference additional headers your program requires here
+#pragma   warning(disable:4996)

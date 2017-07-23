@@ -7,13 +7,10 @@
 AsynchRecvResponse::AsynchRecvResponse(ChannelPtr c, BufferPtr buf)
 : AsynchResult(c, buf)
 {
-    //rpcprintf("new AsynchRecvResponse\n");
-
 }
 
 AsynchRecvResponse::~AsynchRecvResponse(void)
 {
-    //rpcprintf("~~~AsynchRecvResponse\n");
 }
 
 void AsynchRecvResponse::onAsyncOperationCompleted(size_t bytesTransferred,

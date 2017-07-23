@@ -13,7 +13,7 @@ Mutex::~Mutex(void)
 
 void Mutex::lock(int milliseconds) const
 {
-    WaitForSingleObject(handle, milliseconds);
+    ::WaitForSingleObject(handle, milliseconds);
 }
 
 void Mutex::unlock(void) const

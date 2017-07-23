@@ -7,12 +7,10 @@
 AsynchSendResponse::AsynchSendResponse(ChannelPtr c, BufferPtr buf)
 : AsynchResult(c, buf)
 {
-    //rpcprintf("new AsynchSendResponse\n");
 }
 
 AsynchSendResponse::~AsynchSendResponse()
 {
-    //rpcprintf("~~~AsynchSendResponse\n");
 }
 
 void AsynchSendResponse::onAsyncOperationCompleted(size_t bytesTransferred,

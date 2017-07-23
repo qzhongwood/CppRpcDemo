@@ -14,13 +14,12 @@ Channel::Channel(string address, int port, SOCKET sock)
 , closed(false)
 {
     long n = ++counter;
-    rpcprintf("new Channel: <%x>, counter <%d>\n", this, n);
 }
 
 Channel::~Channel(void)
 {
     int n = --counter;
-    rpcprintf("~Channel: <%x>, counter <%d>\n", this, n);
+    rpcprintf("Channel destruction: <%x>, counter <%d>\n", this, n);
     shutdown();
 }
 
@@ -43,15 +42,14 @@ void Channel::setRemotingCommandHandler(RemotingCommandHandlerPtr handler)
 
 void Channel::handleRecvResponse(AsynchResultPtr res)
 {
-    BufferPtr buf     = res->getBuffer();
-    BufferPtr prevBuf = buf->prevBuffer();
-
     if (res->getBytesTransferred() == 0)
     {
-        rpcprintf("Oops!!!! bytesTransferred <%d> <%x>\n", 
-            res->getBytesTransferred(), this);
+        rpcprintf("No data received. <%x>\n", this);
         return;
     }
+
+    BufferPtr buf     = res->getBuffer();
+    BufferPtr prevBuf = buf->prevBuffer();
 
     if (prevBuf == NULL) 
     {
@@ -91,7 +89,7 @@ int Channel::asyncRecv(BufferPtr buf)
 
     WSABUF databuff;
     databuff.buf = buf->getBuf();
-    databuff.len = buf->getLength();
+    databuff.len = (u_long)buf->getLength();
 
     DWORD RecvBytes;
     resp->increaseReferenceCount();
@@ -105,7 +103,6 @@ int Channel::asyncRecv(BufferPtr buf)
     } 
     else
     {
-        //rpcprintf("succeed WSARecv: %d\n", RecvBytes);
         res = 0;
     }
 
@@ -114,11 +111,6 @@ int Channel::asyncRecv(BufferPtr buf)
 
 void Channel::handleSendResponse(AsynchResultPtr res)
 {
-    /*
-    rpcprintf("handleSendResponse: bytesTransferred<%d>, success<%d>, event<%x>\n", 
-            res->getBytesTransferred(),
-            res->success(), res->event()
-            );*/
     
 }
 
@@ -134,7 +126,7 @@ int Channel::asyncSend(BufferPtr sendbuf)
 
     WSABUF databuff;
     databuff.buf = sendbuf->getBuf();
-    databuff.len = sendbuf->getLength();
+    databuff.len = (u_long)sendbuf->getLength();
 
     DWORD SendBytes = 0;
     resp->increaseReferenceCount();
@@ -148,7 +140,6 @@ int Channel::asyncSend(BufferPtr sendbuf)
     }
     else
     {
-        //rpcprintf("succeed WSASend: %d\n");
         res = 0;
     }
     return res;

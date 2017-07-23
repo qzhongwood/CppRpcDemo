@@ -159,8 +159,7 @@ void runAsAsyncClient(const string& host, int port, int numTask)
         cmd->setOpCode(tmp);
         cmd->setIndex(i + 1);
 
-        info_printf("Submit request: opcode<%s>, index<%d>\n", 
-            tmp, i + 1);
+        info_printf("Submit request: opcode<%s>, index<%d>\n", tmp, i + 1);
 
         client->asyncInvoke(cmd);
     }
@@ -204,10 +203,9 @@ void runAsClient(const string& host, int port, int numTask)
         cmd->setOpCode(tmp);
         cmd->setIndex(i + 1);
 
-        info_printf("Submit request: index<%d>, opcode<%s>\n", 
-            i + 1, tmp);
+        info_printf("Submit request: index<%d>, opcode<%s>\n", i + 1, tmp);
 
-        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 60);
+        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 6000);
         dumpResponse(response, tmp);
     }
 

@@ -75,10 +75,19 @@ int Acceptor::start(int port)
         ChannelPtr channel = new Channel("localhost", port, acceptSocket);
         channel->setRemotingCommandHandler(handler);
        
-        NetworkIoEngine::instance()->registerHandle(channel->socket(), 0);
-        // try to receive the 1st command header for the channel
-        BufferPtr buf = new Buffer(sizeof(size_t));
-        channel->asyncRecv(buf);
+        int res = NetworkIoEngine::instance()->registerHandle(channel->socket(), 0);
+        if (res == 0)
+        {
+            // try to receive the 1st command header for the channel
+            BufferPtr buf = new Buffer(sizeof(size_t));
+            channel->asyncRecv(buf);
+        }
+        else
+        {
+            info_printf("Register Handle Error: %d \n", GetLastError());
+            channel->shutdown();
+            channel = 0;
+        }
     }
 
     return 0;

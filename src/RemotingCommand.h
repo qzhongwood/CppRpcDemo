@@ -24,8 +24,8 @@ public:
     string getOpCode();
     void setOpCode(string opCode);
 
-    int getIndex();
-    void setIndex(int idx);
+    size_t getIndex();
+    void setIndex(size_t idx);
 
     map<string, string>& getHeader();
     void setHeader(map<string, string> header);

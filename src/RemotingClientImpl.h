@@ -39,8 +39,8 @@ protected:
     map<string, ChannelPtr> channelMap;
 
     Mutex eventMapMutex;
-    map<int, EventPtr> eventMap;
-    map<int, RemotingCommandPtr> responseMap;
+    map<size_t, EventPtr> eventMap;
+    map<size_t, RemotingCommandPtr> responseMap;
 
     ChannelPtr currentChannel;
 };

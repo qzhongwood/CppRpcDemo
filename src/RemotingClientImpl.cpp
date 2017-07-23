@@ -72,7 +72,7 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
         return response;
     }
     
-    int index = command->getIndex();
+    size_t index = command->getIndex();
     EventPtr event = new Event(true);
     {
         Lock lock(eventMapMutex);
@@ -85,14 +85,14 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
     event->await(timeOut);
     {
         Lock lock(eventMapMutex);
-        map<int, EventPtr>::iterator it = eventMap.find(index);
+        map<size_t, EventPtr>::iterator it = eventMap.find(index);
         if (it != eventMap.end())
         {
             eventMap.erase(it);
         }
         else
         {
-            map<int, RemotingCommandPtr>::iterator it = responseMap.find(index);
+            map<size_t, RemotingCommandPtr>::iterator it = responseMap.find(index);
             if (it != responseMap.end())
             {
                 response = it->second;
@@ -138,7 +138,7 @@ void RemotingClientImpl::onRemotingCommand(ChannelPtr channel, BufferPtr respons
     RemotingCommandPtr response = new RemotingCommand(responseBuffer);
     {
         Lock lock(eventMapMutex);
-        map<int, EventPtr>::iterator it = eventMap.find(response->getIndex());
+        map<size_t, EventPtr>::iterator it = eventMap.find(response->getIndex());
         if (it != eventMap.end())
         {
             (it->second)->signal();
@@ -151,7 +151,7 @@ void RemotingClientImpl::onRemotingCommand(ChannelPtr channel, BufferPtr respons
 void RemotingClientImpl::fetchResponse(list<RemotingCommandPtr>& cmdList)
 {
     Lock lock(eventMapMutex);
-    map<int, RemotingCommandPtr>::iterator it = responseMap.begin();
+    map<size_t, RemotingCommandPtr>::iterator it = responseMap.begin();
 
     for(; it != responseMap.end(); ++it)
     {

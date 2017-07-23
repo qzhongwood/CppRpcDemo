@@ -34,7 +34,6 @@ void ExecutorService::spawn()
         if (NULL == ThreadHandle)
         {
             rpcprintf("Create Thread Handle failed. Error: %d\n", GetLastError());
-            break;
         }
         CloseHandle(ThreadHandle);
     }
@@ -87,20 +86,3 @@ DWORD WINAPI ExecutorService::TaskThread(LPVOID IpParam)
     return 0;
 }
 
-
-            /*
-            rpcprintf("<%s> working thread run task. numTaskExecuted<%d>. Thread id<%d>\n", 
-                            threadPool->name.c_str(), 
-                            threadPool->numTaskExecuted - 1,
-                            GetCurrentThreadId());*/
-            
-
-/*
-rpcprintf("<%s> working thread await... numTaskExecuted<%d>. Thread id<%d>\n", 
-threadPool->name.c_str(), 
-threadPool->numTaskExecuted,
-GetCurrentThreadId());*/
-/*
-rpcprintf("<%s> working thread signaled!! Thread id<%d>\n", 
-threadPool->name.c_str(), 
-GetCurrentThreadId());*/

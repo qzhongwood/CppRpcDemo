@@ -62,7 +62,6 @@ void RemotingServerImpl::onRemotingCommand(ChannelPtr channel, RemotingCommandPt
 void RemotingServerImpl::onRemotingCommand(ChannelPtr channel, BufferPtr buffer)
 {
     RemotingCommandPtr cmd = new RemotingCommand(buffer);
-    //rpcprintf("Server: command<%s>", cmd->toString().c_str());
     onRemotingCommand(channel, cmd);
 }
 

@@ -85,7 +85,7 @@ int NetworkIoEngine::createIocp()
         if (NULL == ThreadHandle)
         {
             rpcprintf("Create Thread Handle failed. Error: %d\n", GetLastError());
-            break;
+            return -1;
         }
         CloseHandle(ThreadHandle);
     }
@@ -114,6 +114,8 @@ int NetworkIoEngine::registerHandle(SOCKET handle, const void *completionKey)
 
     if (cp == 0)
     {
+        rpcprintf("Failed to register socket <%d>. Error: %d\n", 
+            handle, GetLastError());
         return -1;
     }
     return 0;
