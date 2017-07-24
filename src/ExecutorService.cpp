@@ -7,9 +7,10 @@
 #include "ExecutorService.h"
 #include "Lock.h"
 
-ExecutorService::ExecutorService(const string& name, int n)
+ExecutorService::ExecutorService(const string& poolName, int n)
 : stop(false)
-, name(name)
+, event(poolName, false)
+, name(poolName)
 , numThread(n)
 , numTaskExecuted(0)
 {

@@ -40,6 +40,7 @@ RemotingCommandPtr TaobaoRequestProcessor::process(ChannelPtr channel, RemotingC
     }
 
     rpcprintf("Taobao processor working. Thread Id <%d>. Result <%s>\n", GetCurrentThreadId(), buf);
+    //Sleep(10000);
     response->setPayload(buf, sizeof(buf));
     channel->asyncSend(response->command2Buffer());
     return response;

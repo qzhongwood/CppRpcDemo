@@ -4,12 +4,22 @@
 
 //#define rpcprintf printf
 
+Event::Event(const string& n, bool manualRet)
+:name(n)
+{
+    handle = CreateEvent(NULL,               // default security attributes
+        manualRet ? TRUE : FALSE,             // manual-reset event
+        0,              // initial state is nonsignaled
+        LPCWSTR(name.c_str())   // object name
+        ); 
+}
+
 Event::Event(bool manualRet)
 {
     handle = CreateEvent(NULL,               // default security attributes
         manualRet ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
-        TEXT("RPC_EVENT")   // object name
+        0               // object name
         ); 
 }
 
@@ -20,7 +30,7 @@ Event::~Event(void)
 
 void Event::await(int milliseconds) const
 {
-    rpcprintf("Event::await, %x\n", this); 
+    rpcprintf("Event::await<%s>: %x\n", name.c_str(), this); 
     DWORD res = WaitForSingleObject(handle, milliseconds);
     switch (res) 
     {
@@ -40,7 +50,7 @@ void Event::await(int milliseconds) const
 
 void Event::signal() const
 {
-    rpcprintf("Event::signal: %x\n", this); 
+    rpcprintf("Event::signal<%s>: %x\n", name.c_str(), this); 
     ::SetEvent(handle);
 }
 

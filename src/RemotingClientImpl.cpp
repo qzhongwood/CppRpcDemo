@@ -73,6 +73,7 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
     }
     
     size_t index = command->getIndex();
+
     EventPtr event = new Event(true);
     {
         Lock lock(eventMapMutex);
@@ -80,7 +81,6 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
     }
 
     submit(address, port, command);
-    Sleep(1);
 
     event->await(timeOut);
 
