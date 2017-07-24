@@ -7,8 +7,8 @@ using namespace std;
 class Event : public Referable
 {
 public:
-    Event(const string& name, bool manualRet = true);
-    Event(bool manualRet = true);
+    Event(const string& name, bool manualReset = true);
+    Event(bool manualReset = true);
     ~Event(void);
     void await(int milliseconds = INFINITE) const;
     void signal() const;

@@ -4,22 +4,22 @@
 
 //#define rpcprintf printf
 
-Event::Event(const string& n, bool manualRet)
+Event::Event(const string& n, bool manualReset)
 :name(n)
 {
     handle = CreateEvent(NULL,               // default security attributes
-        manualRet ? TRUE : FALSE,             // manual-reset event
+        manualReset ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
         0
         ); 
 }
 
-Event::Event(bool manualRet)
+Event::Event(bool manualReset)
 {
     handle = CreateEvent(NULL,               // default security attributes
-        manualRet ? TRUE : FALSE,             // manual-reset event
+        manualReset ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
-        0               // object name
+        0             
         ); 
 }
 
