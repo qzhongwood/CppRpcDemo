@@ -10,7 +10,7 @@ Event::Event(const string& n, bool manualRet)
     handle = CreateEvent(NULL,               // default security attributes
         manualRet ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
-        LPCWSTR(name.c_str())   // object name
+        0
         ); 
 }
 
