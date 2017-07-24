@@ -149,4 +149,9 @@ void NetworkIoEngine::handleEvents(unsigned long milliSeconds)
             (void*)completionKey, resultErr);
         response->decreaseReferenceCount();
     }
+    else
+    {
+        printf("GetQueuedCompletionStatus failed. Error: %d\n", 
+            GetLastError());
+    }
 }

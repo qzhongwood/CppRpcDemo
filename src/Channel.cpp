@@ -99,6 +99,8 @@ int Channel::asyncRecv(BufferPtr buf)
     {
         rpcprintf("WSARecv :%d, err: %d, refCounter: <%d>, this <%p>, this <%x>\n", 
             res, WSAGetLastError(), getReferenceCount(), this, this);
+
+        resp->decreaseReferenceCount();
         shutdown();
     } 
     else
@@ -136,6 +138,7 @@ int Channel::asyncSend(BufferPtr sendbuf)
     {
         rpcprintf("WSASend :%d, err: %d, refCounter: <%d>, this<%p>\n", 
             res, WSAGetLastError(), getReferenceCount(), this);
+        resp->decreaseReferenceCount();
         shutdown();
     }
     else
