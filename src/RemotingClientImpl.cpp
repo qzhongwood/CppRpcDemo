@@ -83,6 +83,7 @@ RemotingCommandPtr RemotingClientImpl::invoke(string address, int port, Remoting
     Sleep(1);
 
     event->await(timeOut);
+
     {
         Lock lock(eventMapMutex);
         map<size_t, EventPtr>::iterator it = eventMap.find(index);
@@ -136,11 +137,13 @@ RemotingCommandPtr RemotingClientImpl::asyncInvoke(RemotingCommandPtr command)
 void RemotingClientImpl::onRemotingCommand(ChannelPtr channel, BufferPtr responseBuffer)
 {
     RemotingCommandPtr response = new RemotingCommand(responseBuffer);
+    rpcprintf("onRemotingCommand happened!\n");
     {
         Lock lock(eventMapMutex);
         map<size_t, EventPtr>::iterator it = eventMap.find(response->getIndex());
         if (it != eventMap.end())
         {
+            rpcprintf("signal happened!\n");
             (it->second)->signal();
             eventMap.erase(it);
         }

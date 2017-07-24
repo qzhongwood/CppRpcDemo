@@ -205,7 +205,7 @@ void runAsClient(const string& host, int port, int numTask)
 
         info_printf("Submit request: index<%d>, opcode<%s>\n", i + 1, tmp);
 
-        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 6000);
+        RemotingCommandPtr response = client->invoke(host.c_str(), port, cmd, 60);
         dumpResponse(response, tmp);
     }
 

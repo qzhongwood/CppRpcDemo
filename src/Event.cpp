@@ -2,12 +2,14 @@
 #include "Event.h"
 #include <iostream>
 
+//#define rpcprintf printf
+
 Event::Event(bool manualRet)
 {
-    handle = CreateEventA(NULL,               // default security attributes
+    handle = CreateEvent(NULL,               // default security attributes
         manualRet ? TRUE : FALSE,             // manual-reset event
         0,              // initial state is nonsignaled
-        ("RPC_EVENT")   // object name
+        TEXT("RPC_EVENT")   // object name
         ); 
 }
 
@@ -18,25 +20,27 @@ Event::~Event(void)
 
 void Event::await(int milliseconds) const
 {
+    rpcprintf("Event::await, %x\n", this); 
     DWORD res = WaitForSingleObject(handle, milliseconds);
     switch (res) 
     {
     case WAIT_TIMEOUT: 
-        rpcprintf("Event: Thread %d WAIT_TIMEOUT\n", GetCurrentThreadId());
+        rpcprintf("Event: Thread %d WAIT_TIMEOUT, %x\n", GetCurrentThreadId(), this);
         break;         
     case WAIT_OBJECT_0: 
         // Event object was signaled
-        rpcprintf("Event: Thread %d signaled\n", GetCurrentThreadId());
+        rpcprintf("Event: Thread %d signaled, %x\n", GetCurrentThreadId(), this);
         break; 
         // An error occurred
     default: 
-        rpcprintf("Wait error: %d\n", GetLastError()); 
+        rpcprintf("Wait error: %d, %x\n", GetLastError(), this); 
     }
 }
 
 
 void Event::signal() const
 {
+    rpcprintf("Event::signal: %x\n", this); 
     ::SetEvent(handle);
 }
 

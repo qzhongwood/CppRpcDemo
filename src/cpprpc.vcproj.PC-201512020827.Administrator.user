@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory=""
-				CommandArguments="-p 16666"
+				CommandArguments="-p 16666 -h 127.0.0.1 -n 1"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
