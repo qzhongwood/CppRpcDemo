@@ -53,7 +53,7 @@ map<string, string>& RemotingCommand::getHeader()
     return header;
 }
 
-void RemotingCommand::setHeader(map<string, string> header)
+void RemotingCommand::setHeader(const map<string, string>& header)
 {
     this->header = header;
 }

@@ -28,7 +28,7 @@ public:
     void setIndex(size_t idx);
 
     map<string, string>& getHeader();
-    void setHeader(map<string, string> header);
+    void setHeader(const map<string, string>& header);
 
     char* getPayload();
     size_t getPayloadLength();
